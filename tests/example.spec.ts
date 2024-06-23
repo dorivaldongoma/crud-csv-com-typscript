@@ -13,6 +13,17 @@ test('get started link', async ({ page }) => {
     console.log('Arquivo CSV criado com sucesso.');
   }
 
+// Função para ler um arquivo CSV
+  function lerCSV(): void {
+    if (!fs.existsSync(caminhoDoArquivoCSV)) {
+      console.error('Arquivo CSV não encontrado.');
+      return;
+    }
+    const conteudoCSV = fs.readFileSync(caminhoDoArquivoCSV, 'utf8');
+    console.log('Conteúdo do arquivo CSV:');
+    console.log(conteudoCSV);
+  }
+
   // Criar o arquivo CSV
   const cabecalhos = ['Nome', 'Idade', 'Cidade'];
   const dados = [
@@ -20,5 +31,8 @@ test('get started link', async ({ page }) => {
     ['Dori', '25', 'Lunda Norte'],
   ];
   criarCSV(cabecalhos, dados);
+
+  // Ler o arquivo CSV
+  lerCSV();
 
 });
