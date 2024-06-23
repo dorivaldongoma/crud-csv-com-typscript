@@ -36,6 +36,28 @@ test('get started link', async ({ page }) => {
     console.log('Linha adicionada ao arquivo CSV com sucesso.');
   }
 
+  // Função para editar uma linha específica no arquivo CSV
+  function editarLinhaCSV(indiceLinha: number, novaLinha: string[]): void {
+    if (!fs.existsSync(caminhoDoArquivoCSV)) {
+      console.error('Arquivo CSV não encontrado.');
+      return;
+    }
+
+    const conteudoCSV = fs.readFileSync(caminhoDoArquivoCSV, 'utf8');
+    const linhas = conteudoCSV.split('\n');
+    if (indiceLinha < 0 || indiceLinha >= linhas.length - 1) { // Verificação de índice válido
+      console.error('Índice de linha inválido.');
+      return;
+    }
+
+    const cabecalhos = linhas[0]; // Mantém os cabeçalhos
+    linhas[indiceLinha + 1] = novaLinha.join(','); // Substitui a linha específica (indiceLinha + 1 para ignorar cabeçalhos)
+    const conteudoAtualizado = [cabecalhos, ...linhas.slice(1)].join('\n');
+
+    fs.writeFileSync(caminhoDoArquivoCSV, conteudoAtualizado, 'utf8');
+    console.log('Linha do arquivo CSV editada com sucesso.');
+  }
+
   // Criar o arquivo CSV
   const cabecalhos = ['Nome', 'Idade', 'Cidade'];
   const dados = [
@@ -51,5 +73,12 @@ test('get started link', async ({ page }) => {
   const novaLinha = ['Ana', '28', 'Cabinda'];
   adicionarLinhaCSV(novaLinha);
   // Ler novamente para verificar a edição
+  lerCSV();
+
+  // Edita uma linha específica do arquivo CSV
+  const linhaAtualizada = ['David', '40', 'Huíla'];
+  const indiceLinha = 1; // Índice da linha que queremos editar (0 = primeira linha de dados)
+  editarLinhaCSV(indiceLinha, linhaAtualizada);
+// Ler novamente para verificar a edição da linha
   lerCSV();
 });
