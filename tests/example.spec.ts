@@ -87,6 +87,17 @@ test('get started link', async ({ page }) => {
     console.log('Coluna do arquivo CSV editada com sucesso.');
   }
 
+  // Função para apagar um arquivo CSV
+  function eliminarCSV(): void {
+    if (fs.existsSync(caminhoDoArquivoCSV)) {
+      fs.unlinkSync(caminhoDoArquivoCSV);
+      console.log('Arquivo CSV apagado com sucesso.');
+    } else {
+      console.error('Arquivo CSV não encontrado.');
+    }
+  }
+
+
   // Criar o arquivo CSV
   const cabecalhos = ['Nome', 'Idade', 'Cidade'];
   const dados = [
@@ -108,7 +119,7 @@ test('get started link', async ({ page }) => {
   const linhaAtualizada = ['David', '40', 'Huíla'];
   const indiceLinha = 1; // Índice da linha que queremos editar (0 = primeira linha de dados)
   editarLinhaCSV(indiceLinha, linhaAtualizada);
-// Ler novamente para verificar a edição da linha
+  // Ler novamente para verificar a edição da linha
   lerCSV();
 
   // Editar uma coluna específica de uma linha específica do arquivo CSV
@@ -117,4 +128,7 @@ test('get started link', async ({ page }) => {
   editarColunaCSV(indiceLinha, indiceColuna, novoDado);
   // Ler novamente para verificar a edição da coluna
   lerCSV();
+
+  // Eliminar o arquivo CSV
+  eliminarCSV();
 });
