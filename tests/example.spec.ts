@@ -58,6 +58,35 @@ test('get started link', async ({ page }) => {
     console.log('Linha do arquivo CSV editada com sucesso.');
   }
 
+  // Função para editar um dado específico de uma coluna em uma linha específica
+  function editarColunaCSV(indiceLinha: number, indiceColuna: number, novoDado: string): void {
+    if (!fs.existsSync(caminhoDoArquivoCSV)) {
+      console.error('Arquivo CSV não encontrado.');
+      return;
+    }
+
+    const conteudoCSV = fs.readFileSync(caminhoDoArquivoCSV, 'utf8');
+    const linhas = conteudoCSV.split('\n');
+    if (indiceLinha < 0 || indiceLinha >= linhas.length - 1) { // Verificação de índice válido
+      console.error('Índice de linha inválido.');
+      return;
+    }
+
+    const cabecalhos = linhas[0]; // Mantém os cabeçalhos
+    const colunas = linhas[indiceLinha + 1].split(',');
+    if (indiceColuna < 0 || indiceColuna >= colunas.length) { // Verificação de índice válido de coluna
+      console.error('Índice de coluna inválido.');
+      return;
+    }
+
+    colunas[indiceColuna] = novoDado;
+    linhas[indiceLinha + 1] = colunas.join(',');
+    const conteudoAtualizado = [cabecalhos, ...linhas.slice(1)].join('\n');
+
+    fs.writeFileSync(caminhoDoArquivoCSV, conteudoAtualizado, 'utf8');
+    console.log('Coluna do arquivo CSV editada com sucesso.');
+  }
+
   // Criar o arquivo CSV
   const cabecalhos = ['Nome', 'Idade', 'Cidade'];
   const dados = [
@@ -80,5 +109,12 @@ test('get started link', async ({ page }) => {
   const indiceLinha = 1; // Índice da linha que queremos editar (0 = primeira linha de dados)
   editarLinhaCSV(indiceLinha, linhaAtualizada);
 // Ler novamente para verificar a edição da linha
+  lerCSV();
+
+  // Editar uma coluna específica de uma linha específica do arquivo CSV
+  const indiceColuna = 1; // Índice da coluna que queremos editar (0 = primeira coluna)
+  const novoDado = '35'; // Novo dado para a coluna específica
+  editarColunaCSV(indiceLinha, indiceColuna, novoDado);
+  // Ler novamente para verificar a edição da coluna
   lerCSV();
 });
